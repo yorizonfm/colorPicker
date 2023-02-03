@@ -9,7 +9,7 @@
 <body>
 
     <!-- HTML -->
-    <canvas id="canvashue" width="360" height="120"></canvas>
+    <canvas id="canvas" width="360" height="120"></canvas>
     <!-- END HTML -->
     
     <style>
@@ -25,7 +25,7 @@
 
     <script>
         // JS
-        const canvas = document.getElementById("canvashue");
+        const canvas = document.getElementById("canvas");
         const ctxHue = canvas.getContext("2d");
         const ctxSaturation = canvas.getContext("2d");
         const lightness = 50;
@@ -78,14 +78,19 @@
 
         for (let i = 0; i < 100; i++) {
             let saturation = 100 - i;
-            ctxHue.fillStyle = `hsl(${Math.round(hue)}, ${saturation}%, ${lightness}%)`;
-            ctxHue.fillRect(440, 10 + i, 10, 1);
+            ctxSaturation.fillStyle = `hsl(${Math.round(
+            hue
+            )}, ${saturation}%, ${lightness}%)`;
+            console.log(`${saturation}%`);
+            ctxSaturation.fillRect(210, 10 + i, 10, 1);
         }
 
         for (let i = 0; i < 100; i++) {
             let saturation = 100 - i;
-            ctxHue.fillStyle = `hsl(${Math.round(hue)}, ${saturation}%, ${lightness}%)`;
-            ctxHue.fillRect(220, 10 + i, 10, 1);
+            ctxSaturation.fillStyle = `hsl(${Math.round(
+            hue
+            )}, ${saturation}%, ${lightness}%)`;
+            ctxSaturation.fillRect(310, 10 + i, 10, 1);
         }
         }
 
@@ -117,6 +122,7 @@
         });
 
         drawCircle(hue);
+
     // END JS
     </script>
 
