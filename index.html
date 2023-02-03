@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- HTML -->
+    <canvas id="canvashue" width="360" height="120"></canvas>
+    <!-- END HTML -->
+    
+    <style>
+        /* CSS */
+        body {
+            background: black;
+        }
+        canvas {
+            border: red 1px solid;
+        }
+        /* END CSS */
+    </style>
+
+    <script>
+        // JS
+        const canvas = document.getElementById("canvashue");
+        const ctxHue = canvas.getContext("2d");
+        const ctxSaturation = canvas.getContext("2d");
+        const lightness = 50;
+        const centerX = 64;
+        const centerY = canvas.height / 2;
+        const radius = 40;
+        let hueResult;
+        let hue = 0;
+        let isDragging = false;
+
+        function drawCircle(hue) {
+        ctxHue.clearRect(
+            centerX - radius - 10,
+            centerY - radius - 10,
+            radius * 2 + 20,
+            radius * 2 + 20
+        );
+
+        for (let i = 0; i < 360; i++) {
+            ctxHue.beginPath();
+            ctxHue.arc(
+            centerX,
+            centerY,
+            radius,
+            ((i - 2) * Math.PI) / 180,
+            (i * Math.PI) / 180
+            );
+            ctxHue.strokeStyle = `hsl(${i}, 100%, 50%)`;
+            ctxHue.lineWidth = 8;
+            ctxHue.stroke();
+            ctxHue.closePath();
+        }
+
+        ctxHue.beginPath();
+        ctxHue.arc(
+            centerX + radius * Math.cos((hue * Math.PI) / 180),
+            centerY + radius * Math.sin((hue * Math.PI) / 180),
+            7.5,
+            0,
+            2 * Math.PI
+        );
+        ctxHue.fillStyle = "white";
+        ctxHue.fill();
+        ctxHue.closePath();
+        ctxHue.fillStyle = `hsl(${hue}, 100%, 50%)`;
+        ctxHue.font = "16px fantasy";
+        ctxHue.textAlign = "center";
+        ctxHue.fillText(`${Math.round(hue)}°`, centerX, centerY);
+        ctxHue.fillText("Teinte", centerX, centerY + 20);
+
+        for (let i = 0; i < 100; i++) {
+            let saturation = 100 - i;
+            ctxHue.fillStyle = `hsl(${Math.round(hue)}, ${saturation}%, ${lightness}%)`;
+            ctxHue.fillRect(440, 10 + i, 10, 1);
+        }
+
+        for (let i = 0; i < 100; i++) {
+            let saturation = 100 - i;
+            ctxHue.fillStyle = `hsl(${Math.round(hue)}, ${saturation}%, ${lightness}%)`;
+            ctxHue.fillRect(220, 10 + i, 10, 1);
+        }
+        }
+
+        canvas.addEventListener("mousedown", (event) => {
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
+        const newHue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+        const distance = Math.sqrt(
+            Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+        );
+        if (distance < radius + 10 && distance > radius - 10) {
+            isDragging = true;
+        }
+        });
+
+        canvas.addEventListener("mousemove", (event) => {
+        if (!isDragging) {
+            return;
+        }
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
+        hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+        hue = hue < 0 ? hue + 360 : hue;
+        drawCircle(hue);
+        });
+
+        canvas.addEventListener("mouseup", (event) => {
+        isDragging = false;
+        });
+
+        drawCircle(hue);
+    // END JS
+    </script>
+
+</body>
+</html>
