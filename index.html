@@ -26,158 +26,149 @@
     <script>
         // JS
         // Récupération du canvas
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-let centerX = 90;
-let centerY = canvas.height / 2;
-let radius = 75;
-let hue = 0;
-let saturation = 100;
-let lightness = 50;
-let isDragging = false;
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let centerX = 90;
+        let centerY = canvas.height / 2;
+        let radius = 75;
+        let hue = 0;
+        let saturation = 100;
+        let lightness = 50;
+        let isDraggingHue = false;
+        let isDraggingSaturation = false;
+        let isDraggingLightness = false;
 
-const hueDisplay = document.getElementById("hueDisplay");
-const saturationDisplay = document.getElementById("saturationDisplay");
-const lightnessDisplay = document.getElementById("lightnessDisplay");
-const hslDisplay = document.getElementById("hslDisplay");
+        const hueDisplay = document.getElementById("hueDisplay");
+        const saturationDisplay = document.getElementById("saturationDisplay");
+        const lightnessDisplay = document.getElementById("lightnessDisplay");
+        const hslDisplay = document.getElementById("hslDisplay");
 
-// Fonction pour dessiner le cercle
-function drawCircle() {
-  // Effacement de la zone précédente
-  ctx.clearRect(
-    centerX - radius - 10,
-    centerY - radius - 10,
-    radius * 2 + 20,
-    radius * 2 + 20
-  );
+        // Fonction pour dessiner le cercle
+        function drawCircle() {
+        // Effacement de la zone précédente
+        ctx.clearRect(
+            centerX - radius - 10,
+            centerY - radius - 10,
+            radius * 2 + 20,
+            radius * 2 + 20
+        );
 
-  for (let i = 0; i < 360; i++) {
-    let startAngle = ((i - 2) * Math.PI) / 180;
-    let endAngle = (i * Math.PI) / 180;
-    ctx.fillStyle = `hsl(${i}, 100%, 50%)`;
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
-    ctx.fill();
-    ctx.closePath();
-  }
+        for (let i = 0; i < 360; i++) {
+            let startAngle = ((i - 2) * Math.PI) / 180;
+            let endAngle = (i * Math.PI) / 180;
+            ctx.fillStyle = `hsl(${i}, 100%, 50%)`;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+            ctx.fill();
+            ctx.closePath();
+        }
 
-  ctx.fillStyle = "black";
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 57.5, 0, 2 * Math.PI, false);
-  ctx.fill();
-  ctx.closePath();
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 57.5, 0, 2 * Math.PI, false);
+        ctx.fill();
+        ctx.closePath();
 
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 7.5;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-  ctx.stroke();
-  ctx.closePath();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 7.5;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+        ctx.stroke();
+        ctx.closePath();
 
-  // Dessiner la barre verticale pour la saturation
-  for (let i = 0; i < 145; i += 1) {
-    const saturation = 145 - i;
-    ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    ctx.fillRect(302.5, 27 + i, 15, 1);
-  }
+        // Dessiner la barre verticale pour la saturation
+        for (let i = 0; i < 145; i += 1) {
+            const saturation = 145 - i;
+            ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            ctx.fillRect(302.5, 27 + i, 15, 1);
+        }
 
-  // Dessiner la barre verticale pour la luminosité
-  for (let i = 0; i < 145; i += 1) {
-    const lightness = (1 - i / 145) * 100;
-    ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    ctx.fillRect(452.5, 27 + i, 15, 1);
-  }
+        // Dessiner la barre verticale pour la luminosité
+        for (let i = 0; i < 145; i += 1) {
+            const lightness = (1 - i / 145) * 100;
+            ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            ctx.fillRect(452.5, 27 + i, 15, 1);
+        }
 
-  // Dessin du curseur de teinte
-  ctx.beginPath();
-  ctx.arc(
-    centerX + (radius - 10) * Math.cos((hue * Math.PI) / 180),
-    centerY + (radius - 10) * Math.sin((hue * Math.PI) / 180),
-    10,
-    0,
-    2 * Math.PI
-  );
-  ctx.fillStyle = "white";
-  ctx.fill();
-  ctx.closePath();
+        // Dessin du curseur de teinte
+        ctx.beginPath();
+        ctx.arc(
+            centerX + (radius - 10) * Math.cos((hue * Math.PI) / 180),
+            centerY + (radius - 10) * Math.sin((hue * Math.PI) / 180),
+            10,
+            0,
+            2 * Math.PI
+        );
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.closePath();
 
-  ctx.fillStyle = "white";
-  ctx.fillRect(
-    300,
-    (canvas.height - 150) / 2 - 5,
-    20,
-    15
-  );
+        ctx.fillStyle = "white";
+        ctx.fillRect(300, (canvas.height - 150) / 2 - 5, 20, 15);
 
-  ctx.fillStyle = "white";
-  ctx.fillRect(
-    450,
-    (canvas.height - 150) / 2 - 5,
-    20,
-    15
-  );
-  ctx.font = "24px Fantasy";
-  ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("Teinte", centerX, centerY + 15);
-  ctx.fillText(Math.round(hue) + "°", centerX, centerY - 15);
+        ctx.fillStyle = "white";
+        ctx.fillRect(450, (canvas.height - 150) / 2 - 5, 20, 15);
+        ctx.font = "24px Fantasy";
+        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Teinte", centerX, centerY + 15);
+        ctx.fillText(Math.round(hue) + "°", centerX, centerY - 15);
 
-  hueDisplay.innerHTML = Math.round(hue);
-  saturationDisplay.innerHTML = Math.round(saturation);
-  lightnessDisplay.innerHTML = Math.round(lightness);
-  hslDisplay.innerHTML = `hsl(${Math.round(hue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`;
-}
+        hueDisplay.innerHTML = Math.round(hue);
+        saturationDisplay.innerHTML = Math.round(saturation);
+        lightnessDisplay.innerHTML = Math.round(lightness);
+        hslDisplay.innerHTML = `hsl(${Math.round(hue)}, ${Math.round(
+            saturation
+        )}%, ${Math.round(lightness)}%)`;
+        }
 
+        // Écouter l'événement de souris "mousedown" sur le canvas
+        canvas.addEventListener("mousedown", (event) => {
+        // Récupérer la position x et y de la souris par rapport au canvas
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
 
+        // Calculer la nouvelle teinte en utilisant la formule mathématique
+        const newHue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
 
-// Écouter l'événement de souris "mousedown" sur le canvas
-canvas.addEventListener("mousedown", (event) => {
-  // Récupérer la position x et y de la souris par rapport au canvas
-  const x = event.clientX - canvas.offsetLeft;
-  const y = event.clientY - canvas.offsetTop;
+        // Calculer la distance entre le centre du cercle et le point cliqué
+        const distance = Math.sqrt(
+            Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+        );
 
-  // Calculer la nouvelle teinte en utilisant la formule mathématique
-  const newHue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+        // Vérifier si la distance est à l'intérieur ou à l'extérieur du cercle
+        if (distance < radius && distance > radius - 20) {
+            isDraggingHue = true;
+        }
+        });
 
-  // Calculer la distance entre le centre du cercle et le point cliqué
-  const distance = Math.sqrt(
-    Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
-  );
+        // Écouter l'événement de souris "mousemove" sur le canvas
+        canvas.addEventListener("mousemove", (event) => {
+        // Si le bouton de souris n'est pas enfoncé, ne rien faire
+        if (!isDraggingHue) {
+            return;
+        }
 
-  // Vérifier si la distance est à l'intérieur ou à l'extérieur du cercle
-  if (distance < radius && distance > radius - 20) {
-    isDragging = true;
-  }
-});
+        // Récupérer la position x et y de la souris par rapport au canvas
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
 
-// Écouter l'événement de souris "mousemove" sur le canvas
-canvas.addEventListener("mousemove", (event) => {
-  // Si le bouton de souris n'est pas enfoncé, ne rien faire
-  if (!isDragging) {
-    return;
-  }
+        // Calculer la teinte en utilisant la formule mathématique
+        hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+        hue = hue < 0 ? hue + 360 : hue;
+        drawCircle();
+        });
 
-  // Récupérer la position x et y de la souris par rapport au canvas
-  const x = event.clientX - canvas.offsetLeft;
-  const y = event.clientY - canvas.offsetTop;
+        // Écouter l'événement de souris "mouseup" sur le canvas
+        canvas.addEventListener("mouseup", (event) => {
+        // Désactiver le flag de déplacement de souris
+        isDraggingHue = false;
+        });
 
-  // Calculer la teinte en utilisant la formule mathématique
-  hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
-  hue = hue < 0 ? hue + 360 : hue;
-  drawCircle();
-});
-
-// Écouter l'événement de souris "mouseup" sur le canvas
-canvas.addEventListener("mouseup", (event) => {
-  // Désactiver le flag de déplacement de souris
-  isDragging = false;
-});
-
-// Appeler la fonction pour dessiner le cercle pour la première fois
-drawCircle();
-
+        // Appeler la fonction pour dessiner le cercle pour la première fois
+        drawCircle();
 
     // END JS
     </script>
