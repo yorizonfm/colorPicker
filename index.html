@@ -43,80 +43,91 @@
         const lightnessDisplay = document.getElementById("lightnessDisplay");
         const hslDisplay = document.getElementById("hslDisplay");
 
-        // Fonction pour dessiner le cercle
+        // Fonction pour dessiner le color picker
         function drawCircle() {
-        // Effacement de la zone précédente
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Effacement de la zone précédente
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        for (let i = 0; i < 360; i++) {
-            let startAngle = ((i - 2) * Math.PI) / 180;
-            let endAngle = (i * Math.PI) / 180;
-            ctx.fillStyle = `hsl(${i}, 100%, 50%)`;
+            for (let i = 0; i < 360; i++) {
+                let startAngle = ((i - 2) * Math.PI) / 180;
+                let endAngle = (i * Math.PI) / 180;
+                ctx.fillStyle = `hsl(${i}, 100%, 50%)`;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            ctx.fillStyle = "black";
             ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+            ctx.arc(centerX, centerY, 57.5, 0, 2 * Math.PI, false);
             ctx.fill();
             ctx.closePath();
-        }
 
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 57.5, 0, 2 * Math.PI, false);
-        ctx.fill();
-        ctx.closePath();
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 7.5;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+            ctx.stroke();
+            ctx.closePath();
 
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 7.5;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-        ctx.stroke();
-        ctx.closePath();
+            // Dessiner la barre verticale pour la saturation
+            for (let i = 0; i < 145; i += 1) {
+                const saturation = 145 - i;
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                ctx.fillRect(302.5, 27 + i, 15, 1);
+            }
 
-        // Dessiner la barre verticale pour la saturation
-        for (let i = 0; i < 145; i += 1) {
-            const saturation = 145 - i;
-            ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-            ctx.fillRect(302.5, 27 + i, 15, 1);
-        }
+            // Dessiner la barre verticale pour la luminosité
+            for (let i = 0; i < 145; i += 1) {
+                const lightness = (1 - i / 145) * 100;
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                ctx.fillRect(452.5, 27 + i, 15, 1);
+            }
 
-        // Dessiner la barre verticale pour la luminosité
-        for (let i = 0; i < 145; i += 1) {
-            const lightness = (1 - i / 145) * 100;
-            ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-            ctx.fillRect(452.5, 27 + i, 15, 1);
-        }
+            // Dessin du curseur de teinte
+            ctx.beginPath();
+            ctx.arc(
+                centerX + (radius - 10) * Math.cos((hue * Math.PI) / 180),
+                centerY + (radius - 10) * Math.sin((hue * Math.PI) / 180),
+                10,
+                0,
+                2 * Math.PI
+            );
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.closePath();
 
-        // Dessin du curseur de teinte
-        ctx.beginPath();
-        ctx.arc(
-            centerX + (radius - 10) * Math.cos((hue * Math.PI) / 180),
-            centerY + (radius - 10) * Math.sin((hue * Math.PI) / 180),
-            10,
-            0,
-            2 * Math.PI
-        );
-        ctx.fillStyle = "white";
-        ctx.fill();
-        ctx.closePath();
+            // Dessin du curseur pour la saturation
+            const saturationCursorX = 302.5 - 10 / 2;
+            const saturationCursorY = 27 + (145 - (saturation / 100) * 145) - 20 / 2;
+            ctx.fillStyle = "white";
+            ctx.fillRect(saturationCursorX, saturationCursorY, 25, 15);
 
-        ctx.fillStyle = "white";
-        ctx.fillRect(300, (canvas.height - 150) / 2 - 5, 20, 15);
+            // Dessin du curseur pour la luminosité
+            const lightnessCursorX = 452.5 - 10 / 2;
+            const lightnessCursorY = 27 + (145 - (lightness / 100) * 145) - 20 / 2;
+            ctx.fillStyle = "white";
+            ctx.fillRect(lightnessCursorX, lightnessCursorY, 25, 15);
 
-        ctx.fillStyle = "white";
-        ctx.fillRect(450, (canvas.height - 150) / 2 - 5, 20, 15);
-        ctx.font = "24px Fantasy";
-        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Teinte", centerX, centerY + 15);
-        ctx.fillText(Math.round(hue) + "°", centerX, centerY - 15);
 
-        hueDisplay.innerHTML = Math.round(hue);
-        saturationDisplay.innerHTML = Math.round(saturation);
-        lightnessDisplay.innerHTML = Math.round(lightness);
-        hslDisplay.innerHTML = `hsl(${Math.round(hue)}, ${Math.round(
-            saturation
-        )}%, ${Math.round(lightness)}%)`;
+            // Dessin des texte pour les valeurs de teinte, saturation et luminosité
+            ctx.font = "24px Fantasy";
+            ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("Teinte", centerX, centerY + 15);
+            ctx.fillText(Math.round(hue) + "°", centerX, centerY - 15);
+            ctx.fillText("Saturation", centerX + 140, centerY + 15);
+            ctx.fillText("100%", centerX + 140, centerY - 15);
+            ctx.fillText("Luminosité", centerX + 300, centerY + 15);
+            ctx.fillText("50%", centerX + 300, centerY - 15);
+
+            hueDisplay.innerHTML = Math.round(hue);
+            saturationDisplay.innerHTML = Math.round(saturation);
+            lightnessDisplay.innerHTML = Math.round(lightness);
+            hslDisplay.innerHTML = `hsl(${Math.round(hue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`;
         }
 
         // Écouter l'événement de souris "mousedown" sur le canvas
