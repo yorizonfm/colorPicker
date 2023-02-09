@@ -126,9 +126,9 @@
             ctx.fillText("Teinte", centerX, centerY + 15);
             ctx.fillText(Math.round(hue) + "°", centerX, centerY - 15);
             ctx.fillText("Saturation", centerX + 140, centerY + 15);
-            ctx.fillText("100%", centerX + 140, centerY - 15);
+            ctx.fillText(Math.round(saturation) + "%", centerX + 140, centerY - 15);
             ctx.fillText("Luminosité", centerX + 300, centerY + 15);
-            ctx.fillText("50%", centerX + 300, centerY - 15);
+            ctx.fillText(Math.round(lightness) + "%", centerX + 300, centerY - 15);
 
             hueDisplay.innerHTML = Math.round(hue);
             saturationDisplay.innerHTML = Math.round(saturation);
