@@ -137,96 +137,96 @@
         }
 
         canvas.addEventListener("mousedown", (event) => {
-        const x = event.clientX - canvas.offsetLeft;
-        const y = event.clientY - canvas.offsetTop;
+            let x = event.offsetX;
+            let y = event.offsetY;
 
-        // Vérification de la barre de saturation
-        if (x >= 302.5 && x <= 317.5 && y >= 27 && y <= 172) {
-            isDraggingSaturation = true;
-            saturation = (1 - (y - 27) / 145) * 100;
-            if (saturation > 100) {
-            saturation = 100;
-            } else if (saturation < 0) {
-            saturation = 0;
+            // Vérification de la barre de saturation
+            if (x >= 302.5 && x <= 317.5 && y >= 27 && y <= 172) {
+                isDraggingSaturation = true;
+                saturation = (1 - (y - 27) / 145) * 100;
+                if (saturation > 100) {
+                    saturation = 100;
+                } else if (saturation < 0) {
+                    saturation = 0;
+                }
+                drawCircle();
             }
-            drawCircle();
-        }
 
-        // Vérification de la barre de luminosité
-        if (x >= 452.5 && x <= 467.5 && y >= 27 && y <= 172) {
-            isDraggingLightness = true;
-            lightness = (1 - (y - 27) / 145) * 100;
-            if (lightness > 100) {
-            lightness = 100;
-            } else if (lightness < 0) {
-            lightness = 0;
+            // Vérification de la barre de luminosité
+            if (x >= 452.5 && x <= 467.5 && y >= 27 && y <= 172) {
+                isDraggingLightness = true;
+                lightness = (1 - (y - 27) / 145) * 100;
+                if (lightness > 100) {
+                    lightness = 100;
+                } else if (lightness < 0) {
+                    lightness = 0;
+                }
+                drawCircle();
             }
-            drawCircle();
-        }
 
-        // Vérification du cercle d'arc en ciel
-        const newHue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+            // Vérification du cercle d'arc en ciel
+            const newHue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
 
-        const distance = Math.sqrt(
-            Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
-        );
+            const distance = Math.sqrt(
+                Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+            );
 
-        if (distance < radius && distance > radius - 20) {
-            isDraggingHue = true;
-        }
+            if (distance < radius && distance > radius - 20) {
+                isDraggingHue = true;
+            }
         });
 
         canvas.addEventListener("mousemove", (event) => {
-        if (!isDraggingHue && !isDraggingSaturation && !isDraggingLightness) {
-            return;
-        }
-
-        const x = event.clientX - canvas.offsetLeft;
-        const y = event.clientY - canvas.offsetTop;
-
-        // Si on est en train de déplacer la barre de saturation
-        if (isDraggingSaturation) {
-            saturation = (1 - (y - 27) / 145) * 100;
-            if (saturation > 100) {
-            saturation = 100;
-            } else if (saturation < 0) {
-            saturation = 0;
+            if (!isDraggingHue && !isDraggingSaturation && !isDraggingLightness) {
+                return;
             }
-            drawCircle();
-        }
 
-        // Si on est en train de déplacer la barre de luminosité
-        if (isDraggingLightness) {
-            lightness = (1 - (y - 27) / 145) * 100;
-            if (lightness > 100) {
-            lightness = 100;
-            } else if (lightness < 0) {
-            lightness = 0;
+            let x = event.offsetX;
+            let y = event.offsetY;
+
+            // Si on est en train de déplacer la barre de saturation
+            if (isDraggingSaturation) {
+                saturation = (1 - (y - 27) / 145) * 100;
+                if (saturation > 100) {
+                    saturation = 100;
+                } else if (saturation < 0) {
+                    saturation = 0;
+                }
+                drawCircle();
             }
-            drawCircle();
-        }
 
-        // Si on est en train de déplacer le cercle d'arc en ciel
-        if (isDraggingHue) {
-            hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
-
-            if (hue < 0) {
-            hue = 360 + hue;
+            // Si on est en train de déplacer la barre de luminosité
+            if (isDraggingLightness) {
+                lightness = (1 - (y - 27) / 145) * 100;
+                if (lightness > 100) {
+                    lightness = 100;
+                } else if (lightness < 0) {
+                    lightness = 0;
+                }
+                drawCircle();
             }
-            drawCircle();
-        }
+
+            // Si on est en train de déplacer le cercle d'arc en ciel
+            if (isDraggingHue) {
+                hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+
+                if (hue < 0) {
+                    hue = 360 + hue;
+                }
+                drawCircle();
+            }
         });
 
         canvas.addEventListener("mouseup", () => {
-        isDraggingHue = false;
-        isDraggingSaturation = false;
-        isDraggingLightness = false;
+            isDraggingHue = false;
+            isDraggingSaturation = false;
+            isDraggingLightness = false;
         });
 
         canvas.addEventListener("mouseleave", () => {
-        isDraggingHue = false;
-        isDraggingSaturation = false;
-        isDraggingLightness = false;
+            isDraggingHue = false;
+            isDraggingSaturation = false;
+            isDraggingLightness = false;
         });
 
         // Affichage initial
