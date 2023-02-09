@@ -49,6 +49,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             for (let i = 0; i < 360; i++) {
+                const hue = i;
                 let startAngle = ((i - 2) * Math.PI) / 180;
                 let endAngle = (i * Math.PI) / 180;
                 ctx.fillStyle = `hsl(${i}, 100%, 50%)`;
@@ -130,52 +131,98 @@
             hslDisplay.innerHTML = `hsl(${Math.round(hue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`;
         }
 
-        // Écouter l'événement de souris "mousedown" sur le canvas
         canvas.addEventListener("mousedown", (event) => {
-        // Récupérer la position x et y de la souris par rapport au canvas
         const x = event.clientX - canvas.offsetLeft;
         const y = event.clientY - canvas.offsetTop;
 
-        // Calculer la nouvelle teinte en utilisant la formule mathématique
+        // Vérification de la barre de saturation
+        if (x >= 302.5 && x <= 317.5 && y >= 27 && y <= 172) {
+            isDraggingSaturation = true;
+            saturation = (1 - (y - 27) / 145) * 100;
+            if (saturation > 100) {
+            saturation = 100;
+            } else if (saturation < 0) {
+            saturation = 0;
+            }
+            drawCircle();
+        }
+
+        // Vérification de la barre de luminosité
+        if (x >= 452.5 && x <= 467.5 && y >= 27 && y <= 172) {
+            isDraggingLightness = true;
+            lightness = (1 - (y - 27) / 145) * 100;
+            if (lightness > 100) {
+            lightness = 100;
+            } else if (lightness < 0) {
+            lightness = 0;
+            }
+            drawCircle();
+        }
+
+        // Vérification du cercle d'arc en ciel
         const newHue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
 
-        // Calculer la distance entre le centre du cercle et le point cliqué
         const distance = Math.sqrt(
             Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
         );
 
-        // Vérifier si la distance est à l'intérieur ou à l'extérieur du cercle
         if (distance < radius && distance > radius - 20) {
             isDraggingHue = true;
         }
         });
 
-        // Écouter l'événement de souris "mousemove" sur le canvas
         canvas.addEventListener("mousemove", (event) => {
-        // Si le bouton de souris n'est pas enfoncé, ne rien faire
-        if (!isDraggingHue) {
+        if (!isDraggingHue && !isDraggingSaturation && !isDraggingLightness) {
             return;
         }
 
-        // Récupérer la position x et y de la souris par rapport au canvas
         const x = event.clientX - canvas.offsetLeft;
         const y = event.clientY - canvas.offsetTop;
 
-        // Calculer la teinte en utilisant la formule mathématique
-        hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
-        hue = hue < 0 ? hue + 360 : hue;
-        drawCircle();
+        // Si on est en train de déplacer la barre de saturation
+        if (isDraggingSaturation) {
+            saturation = (1 - (y - 27) / 145) * 100;
+            if (saturation > 100) {
+            saturation = 100;
+            } else if (saturation < 0) {
+            saturation = 0;
+            }
+            drawCircle();
+        }
+
+        // Si on est en train de déplacer la barre de luminosité
+        if (isDraggingLightness) {
+            lightness = (1 - (y - 27) / 145) * 100;
+            if (lightness > 100) {
+            lightness = 100;
+            } else if (lightness < 0) {
+            lightness = 0;
+            }
+            drawCircle();
+        }
+
+        // Si on est en train de déplacer le cercle d'arc en ciel
+        if (isDraggingHue) {
+            hue = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI;
+
+            if (hue < 0) {
+            hue = 360 + hue;
+            }
+            drawCircle();
+        }
         });
 
-        // Écouter l'événement de souris "mouseup" sur le canvas
-        canvas.addEventListener("mouseup", (event) => {
-        // Désactiver le flag de déplacement de souris
+        canvas.addEventListener("mouseup", () => {
         isDraggingHue = false;
+        isDraggingSaturation = false;
+        isDraggingLightness = false;
         });
 
-        // Appeler la fonction pour dessiner le cercle pour la première fois
-        drawCircle();
-
+        canvas.addEventListener("mouseleave", () => {
+        isDraggingHue = false;
+        isDraggingSaturation = false;
+        isDraggingLightness = false;
+        });
     // END JS
     </script>
 
